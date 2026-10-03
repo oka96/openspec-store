@@ -15,11 +15,15 @@ description lets people keep that context with the task while retaining a short 
 
 ### New Capabilities
 
-None.
+- `SA-REQ-001-description-contract`: Description contract.
+- `FE-REQ-001-description-editor`: Description editor.
+- `BE-REQ-001-description-validation`: Description validation.
+- `QA-REQ-001-description-acceptance`: Description acceptance.
 
 ### Modified Capabilities
 
-- `task-workspace`: Add optional task description editing and display.
+None. Role contracts retain the original task-workspace behavior; the original
+capability delta remains in `legacy/specs/task-workspace/spec.md` for traceability.
 
 ## Impact
 

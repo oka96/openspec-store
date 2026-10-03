@@ -14,11 +14,15 @@ Some tasks cannot proceed until related work finishes. Explicit prerequisites ma
 
 ### New Capabilities
 
-None.
+- `SA-REQ-005-dependency-contract`: Dependency graph contract.
+- `FE-REQ-005-dependency-controls`: Prerequisite selection and warnings.
+- `BE-REQ-005-dependency-validation`: Atomic reference and cycle validation.
+- `QA-REQ-005-dependency-regression`: Dependency lifecycle and graph regression.
 
 ### Modified Capabilities
 
-- `task-workspace`: Show prerequisite tasks and prevent dependency cycles before they confuse delivery.
+None. Role contracts retain the original task-workspace behavior; the original
+capability delta remains in `legacy/specs/task-workspace/spec.md` for traceability.
 
 ## Impact
 

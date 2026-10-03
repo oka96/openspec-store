@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "migration": "role-specs-v1-to-v2",
+  "originals": [
+    {
+      "original": "openspec/requirements.json",
+      "backup": "openspec/migrations/role-specs-v1/requirements.json",
+      "sha256": "c0245be2290b4e5fb1863ba00ae19b1ddc84414f029095156342fd4a4c3e494d",
+      "bytes": 5827
+    },
+    {
+      "original": "openspec/config.yaml",
+      "backup": "openspec/migrations/role-specs-v1/config.yaml",
+      "sha256": "266b0d10712401aa4b54d550e2ecaf0bfe82c5e65e05fa851a20ad544f608928",
+      "bytes": 1464
+    },
+    {
+      "original": "openspec/changes/add-task-descriptions/proposal.md",
+      "backup": "openspec/changes/add-task-descriptions/legacy/proposal.md",
+      "sha256": "c1eb3ab1c3011e7d6d59db9eda1971cfbb90f523e47bfe0cb1b274b67cdfc538",
+      "bytes": 837
+    },
+    {
+      "original": "openspec/changes/add-task-descriptions/design.md",
+      "backup": "openspec/changes/add-task-descriptions/legacy/design.md",
+      "sha256": "ce3447fc8c96f253c6a0cc26370e5bf97c3b1884a0505af1e8a81b4377f9a28f",
+      "bytes": 1783
+    },
+    {
+      "original": "openspec/changes/add-task-descriptions/tasks.md",
+      "backup": "openspec/changes/add-task-descriptions/legacy/tasks.md",
+      "sha256": "4db1537292cfc082916c009ea81a8ee8d76a1dd957910cf2ab2bdbcbd3bdd818",
+      "bytes": 1438
+    },
+    {
+      "original": "openspec/changes/add-task-descriptions/.openspec.yaml",
+      "backup": "openspec/changes/add-task-descriptions/legacy/.openspec.yaml",
+      "sha256": "df4fb22c89b17a0d45d8ca25e98028a2244dceafe5a64ecbbc3bae35db97ccbc",
+      "bytes": 40
+    },
+    {
+      "original": "openspec/changes/add-task-descriptions/specs/task-workspace/spec.md",
+      "backup": "openspec/changes/add-task-descriptions/legacy/specs/task-workspace/spec.md",
+      "sha256": "7c30ac79adfd16431b67dceaf54332cb2f50703288c992d2c753528d14d11ae1",
+      "bytes": 2020
+    },
+    {
+      "original": "openspec/changes/add-task-due-dates/proposal.md",
+      "backup": "openspec/changes/add-task-due-dates/legacy/proposal.md",
+      "sha256": "e14ebd1e4a6bb2d6e2ce9168151b851e142bdfab2c8db5cda03936bcc1e5f062",
+      "bytes": 792
+    },
+    {
+      "original": "openspec/changes/add-task-due-dates/design.md",
+      "backup": "openspec/changes/add-task-due-dates/legacy/design.md",
+      "sha256": "a86c9d1bd23419ae4a2be6225808b8e1b10c9c2ede8e61b957e36f6bc6bbefed",
+      "bytes": 1255
+    },
+    {
+      "original": "openspec/changes/add-task-due-dates/tasks.md",
+      "backup": "openspec/changes/add-task-due-dates/legacy/tasks.md",
+      "sha256": "c7cb1fdcfb97cfafdf5a11a9ef59de809ff90e8267ce5f13a9090b317ae6b7f2",
+      "bytes": 1189
+    },
+    {
+      "original": "openspec/changes/add-task-due-dates/.openspec.yaml",
+      "backup": "openspec/changes/add-task-due-dates/legacy/.openspec.yaml",
+      "sha256": "df4fb22c89b17a0d45d8ca25e98028a2244dceafe5a64ecbbc3bae35db97ccbc",
+      "bytes": 40
+    },
+    {
+      "original": "openspec/changes/add-task-due-dates/specs/task-workspace/spec.md",
+      "backup": "openspec/changes/add-task-due-dates/legacy/specs/task-workspace/spec.md",
+      "sha256": "26255fe6d397d2838fd138e605cbbd1170d487b15c492e76a4729aa8e4a08333",
+      "bytes": 792
+    },
+    {
+      "original": "openspec/changes/add-task-labels/proposal.md",
+      "backup": "openspec/changes/add-task-labels/legacy/proposal.md",
+      "sha256": "64700e484785de99144616deb1a58be9a2991aa166ad2b377be5b0d9c811377a",
+      "bytes": 825
+    },
+    {
+      "original": "openspec/changes/add-task-labels/design.md",
+      "backup": "openspec/changes/add-task-labels/legacy/design.md",
+      "sha256": "f667238cf638968d105363ec90ccf5fcab165d559d5ab3fa6b17e0575045c793",
+      "bytes": 1203
+    },
+    {
+      "original": "openspec/changes/add-task-labels/tasks.md",
+      "backup": "openspec/changes/add-task-labels/legacy/tasks.md",
+      "sha256": "515b6e375cac3bd9d1c190e122b102d607ceefd103149b549f099763bca44b9b",
+      "bytes": 1124
+    },
+    {
+      "original": "openspec/changes/add-task-labels/.openspec.yaml",
+      "backup": "openspec/changes/add-task-labels/legacy/.openspec.yaml",
+      "sha256": "df4fb22c89b17a0d45d8ca25e98028a2244dceafe5a64ecbbc3bae35db97ccbc",
+      "bytes": 40
+    },
+    {
+      "original": "openspec/changes/add-task-labels/specs/task-workspace/spec.md",
+      "backup": "openspec/changes/add-task-labels/legacy/specs/task-workspace/spec.md",
+      "sha256": "6537f732e942091e753f0f84a95b28277a7b00b6d0d386bcd006bee10c2e8797",
+      "bytes": 792
+    },
+    {
+      "original": "openspec/changes/add-task-completion/proposal.md",
+      "backup": "openspec/changes/add-task-completion/legacy/proposal.md",
+      "sha256": "1010bd7baadf84fc1d5508f7b50ef53f65412be34a86e434d4646c1485b7e3fd",
+      "bytes": 795
+    },
+    {
+      "original": "openspec/changes/add-task-completion/design.md",
+      "backup": "openspec/changes/add-task-completion/legacy/design.md",
+      "sha256": "58bfbbcf8a849e3f49748e9f27daceb1f90267caaa6f1af20b5c9cd71ca43c1d",
+      "bytes": 1162
+    },
+    {
+      "original": "openspec/changes/add-task-completion/tasks.md",
+      "backup": "openspec/changes/add-task-completion/legacy/tasks.md",
+      "sha256": "66feed29bbd952b758e10cef2e1126c563a0d019b2bf9b0f20b0a72f8de37834",
+      "bytes": 1151
+    },
+    {
+      "original": "openspec/changes/add-task-completion/.openspec.yaml",
+      "backup": "openspec/changes/add-task-completion/legacy/.openspec.yaml",
+      "sha256": "df4fb22c89b17a0d45d8ca25e98028a2244dceafe5a64ecbbc3bae35db97ccbc",
+      "bytes": 40
+    },
+    {
+      "original": "openspec/changes/add-task-completion/specs/task-workspace/spec.md",
+      "backup": "openspec/changes/add-task-completion/legacy/specs/task-workspace/spec.md",
+      "sha256": "3ed8f9274e9e36ab07c69b2c8f05fc53376c21ad92b45ceb69d7df548d1bdf3a",
+      "bytes": 806
+    },
+    {
+      "original": "openspec/changes/add-task-dependency-links/proposal.md",
+      "backup": "openspec/changes/add-task-dependency-links/legacy/proposal.md",
+      "sha256": "cb2a1f8b848166efef594d559852857bc51e536ce04bd2a19c2bd20a42a88ce9",
+      "bytes": 806
+    },
+    {
+      "original": "openspec/changes/add-task-dependency-links/design.md",
+      "backup": "openspec/changes/add-task-dependency-links/legacy/design.md",
+      "sha256": "c3e682290f9e43643cbea911922fc4e9f7d5ab24051bd03843fdbb0c1f80b9cb",
+      "bytes": 1301
+    },
+    {
+      "original": "openspec/changes/add-task-dependency-links/tasks.md",
+      "backup": "openspec/changes/add-task-dependency-links/legacy/tasks.md",
+      "sha256": "277318c51137312a5c2298ff7a5e673b9bf0041a90ec3ab6f473b7f2a8b63c80",
+      "bytes": 1258
+    },
+    {
+      "original": "openspec/changes/add-task-dependency-links/.openspec.yaml",
+      "backup": "openspec/changes/add-task-dependency-links/legacy/.openspec.yaml",
+      "sha256": "df4fb22c89b17a0d45d8ca25e98028a2244dceafe5a64ecbbc3bae35db97ccbc",
+      "bytes": 40
+    },
+    {
+      "original": "openspec/changes/add-task-dependency-links/specs/task-workspace/spec.md",
+      "backup": "openspec/changes/add-task-dependency-links/legacy/specs/task-workspace/spec.md",
+      "sha256": "67942c76fac6f2e0a522f83aad0650be37977cb9b2a44dd088319d7a8c7edc7f",
+      "bytes": 795
+    },
+    {
+      "original": "openspec/changes/add-task-quick-capture/proposal.md",
+      "backup": "openspec/changes/add-task-quick-capture/legacy/proposal.md",
+      "sha256": "0ad5e7dd69b3d64bfd19b1dc6ed7dd272dae86c0160c7af522b6f438793b7a94",
+      "bytes": 800
+    },
+    {
+      "original": "openspec/changes/add-task-quick-capture/design.md",
+      "backup": "openspec/changes/add-task-quick-capture/legacy/design.md",
+      "sha256": "88fe8e80806dfb204bfa274c543fad1ad6a73313e6ae8a22e89db2e3ce8c9fb3",
+      "bytes": 1198
+    },
+    {
+      "original": "openspec/changes/add-task-quick-capture/tasks.md",
+      "backup": "openspec/changes/add-task-quick-capture/legacy/tasks.md",
+      "sha256": "12d081a711be605f3d01122c8ff0857ec783df4d9f1cb79c94adf85ff510687d",
+      "bytes": 1151
+    },
+    {
+      "original": "openspec/changes/add-task-quick-capture/.openspec.yaml",
+      "backup": "openspec/changes/add-task-quick-capture/legacy/.openspec.yaml",
+      "sha256": "df4fb22c89b17a0d45d8ca25e98028a2244dceafe5a64ecbbc3bae35db97ccbc",
+      "bytes": 40
+    },
+    {
+      "original": "openspec/changes/add-task-quick-capture/specs/task-workspace/spec.md",
+      "backup": "openspec/changes/add-task-quick-capture/legacy/specs/task-workspace/spec.md",
+      "sha256": "1af77b792401464238155a408efb02dab1121fcbef8f9a15dbcff0aa6aed08f1",
+      "bytes": 796
+    }
+  ]
+}

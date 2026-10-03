@@ -1,40 +1,14 @@
-schema: spec-driven
+schema: role-specs
 
 context: |
-  This is an illustrative OpenSpec store for a task workspace. It contains sample
-  requirement changes used by the OpenHands Apps requirement board. Checkboxes
-  represent seeded demonstration progress, not evidence that product code was
-  implemented or tested. Every requirement has SA, Frontend, Backend, and QA work.
-  This repository owns specification artifacts only; the visualizer is developed
+  This illustrative specification store groups role-owned feature specs under
+  REQ-xxx requirements and their existing lowercase OpenSpec change directories.
+  Canonical IDs are SA-REQ-xxx-feature, FE-REQ-xxx-feature, BE-REQ-xxx-feature,
+  and QA-REQ-xxx-feature; each role can have multiple specs. Metadata version 2
+  registers each exact ID in openspec/requirements.json. Keep per-spec contracts
+  at specs/<ID>/spec.md and tasks at tasks/<ID>.md inside the requirement change.
+  Shared proposal/design provide context. Spec-scoped work preserves shared and
+  sibling artifacts. Legacy originals are migration references, not active work.
+  Checked sample tasks are seeded demonstration progress, not implementation or
+  test evidence. This repository owns specifications only; the Kanban app lives
   separately in /Users/oka/Desktop/openhands-apps.
-
-# Project context (optional)
-# Add only constraints that should guide OpenSpec artifacts and workflows.
-# Include constraints an agent cannot infer by reading the code.
-# Keep general project documentation and discoverable codebase facts out.
-# Example:
-#   context: |
-#     Designs and tasks must cover Windows, macOS, and Linux
-#     Write all artifacts in Spanish
-
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always state what is out of scope
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
-
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing

@@ -1,60 +1,53 @@
 import assert from 'node:assert/strict';
-import { readFile, readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { validateStore, roles } from './lib/role-specs.mjs';
 
-const root = new URL('../', import.meta.url);
-const metadata = JSON.parse(await readFile(new URL('openspec/requirements.json', root), 'utf8'));
-const roles = ['SA', 'Frontend', 'Backend', 'QA'];
-const ids = new Set();
-const changes = new Set();
-const expectedStages = ['Backlog', 'SA', 'Implementation', 'QA', 'Blocked', 'Done'];
-const stages = [];
+const root = fileURLToPath(new URL('../', import.meta.url));
+const read = (relative) => readFile(new URL(`../${relative}`, import.meta.url));
+const metadata = JSON.parse(await read('openspec/requirements.json'));
 const seeded = process.argv.includes('--seeded');
+const { summaries, warnings } = await validateStore(root, metadata);
+for (const summary of summaries) {
+  console.log(`${summary.id}: ${summary.stage}; ${summary.complete}/${summary.total} tasks; ${summary.specs.length} role specs`);
+}
+for (const warning of warnings) console.warn(`Warning: ${warning}`);
 
-assert.equal(metadata.version, 1);
-assert.equal(metadata.name, 'Taskflow · Sample spec store');
-assert.match(metadata.description, /illustrative/i);
-assert(Array.isArray(metadata.requirements) && metadata.requirements.length > 0 && metadata.requirements.length <= 50);
-if (seeded) assert.equal(metadata.requirements.length, 6, 'The seeded fixture illustrates six delivery phases.');
-
-for (const requirement of metadata.requirements) {
-  assert(!ids.has(requirement.id), `Duplicate requirement: ${requirement.id}`);
-  assert(!changes.has(requirement.change), `Duplicate change: ${requirement.change}`);
-  ids.add(requirement.id);
-  changes.add(requirement.change);
-  assert.match(requirement.id, /^REQ-\d+$/);
-  assert.match(requirement.change, /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/);
-  assert(requirement.title && requirement.summary);
-  assert.deepEqual(Object.keys(requirement.roles), roles);
-
-  const change = new URL(`openspec/changes/${requirement.change}/`, root);
-  for (const artifact of ['proposal.md', 'design.md', '.openspec.yaml']) {
-    assert((await readFile(new URL(artifact, change), 'utf8')).trim(), `Empty artifact: ${artifact}`);
-  }
-  const specs = await readdir(new URL('specs/', change), { recursive: true });
-  assert(specs.some((file) => file.endsWith('/spec.md')), `${requirement.id}: missing capability specification`);
-  const tasks = await readFile(new URL('tasks.md', change), 'utf8');
-  if (seeded) assert.match(tasks, /Illustrative sample progress only/);
-  const checkboxes = [...tasks.matchAll(/^\s*[-*+]\s+\[\s*(\S?)\s*\]\s+\S+\s+\[(SA|Frontend|Backend|QA)\] (.+)$/gm)];
-  assert.equal(checkboxes.length, (tasks.match(/^\s*[-*+]\s+\[/gm) ?? []).length, 'Every task must be numbered and role tagged.');
-  const summaries = Object.fromEntries(roles.map((role) => {
-    const roleTasks = checkboxes.filter((task) => task[2] === role);
-    assert(roleTasks.length >= (seeded ? 2 : 1), `${requirement.id}: ${role} needs tracked tasks.`);
-    const hint = requirement.roles[role];
-    assert(typeof hint.owner === 'string' && hint.owner.trim() && typeof hint.note === 'string', `${requirement.id}: ${role} needs an owner and a note field.`);
-    if (seeded) assert(hint.note, `${requirement.id}: seeded ${role} needs an illustrative note.`);
-    assert(['backlog', 'in_progress', 'blocked'].includes(hint.state));
-    const done = roleTasks.filter((task) => task[1].toLowerCase() === 'x').length;
-    return [role, { total: roleTasks.length, done, complete: done === roleTasks.length, hint: hint.state }];
-  }));
-  const values = Object.values(summaries);
-  const stage = values.every((role) => role.complete) ? 'Done'
-    : values.some((role) => !role.complete && role.hint === 'blocked') ? 'Blocked'
-      : values.every((role) => role.done === 0 && role.hint === 'backlog') ? 'Backlog'
-        : !summaries.SA.complete ? 'SA'
-          : !summaries.Frontend.complete || !summaries.Backend.complete ? 'Implementation' : 'QA';
-  stages.push(stage);
-  console.log(`${requirement.id}: ${stage}; ${values.reduce((sum, role) => sum + role.done, 0)}/${checkboxes.length} tasks; four roles verified`);
+// Original bytes remain immutable even after active progress changes.
+const manifest = JSON.parse(await read('openspec/migrations/role-specs-v1/manifest.json'));
+assert.equal(manifest.migration, 'role-specs-v1-to-v2');
+assert.equal(manifest.originals.length, 32);
+for (const original of manifest.originals) {
+  const bytes = await read(original.backup);
+  assert.equal(bytes.length, original.bytes, `${original.backup}: original byte length changed`);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), original.sha256, `${original.backup}: original bytes changed`);
 }
 
-if (seeded) assert.deepEqual(stages, expectedStages, 'Seeded samples must illustrate each intended delivery phase once.');
-console.log(seeded ? 'Sample metadata, artifacts, roles, and seeded phases are valid.' : 'Store metadata, artifacts, and four-role task coverage are valid.');
+if (seeded) {
+  const before = JSON.parse(await read('openspec/migrations/role-specs-v1/requirements.json'));
+  assert.equal(metadata.name, before.name);
+  assert.equal(metadata.description, before.description);
+  assert.equal(summaries.length, 6);
+  assert.deepEqual(summaries.map((item) => item.stage), ['Backlog', 'Solution Design', 'Implementation', 'QA', 'Blocked', 'Done']);
+  assert.deepEqual(summaries.map((item) => [item.complete, item.total]), [[0, 8], [1, 8], [3, 8], [7, 8], [3, 8], [8, 8]]);
+  assert.equal(summaries.reduce((sum, item) => sum + item.specs.length, 0), 28);
+  for (const [index, requirement] of metadata.requirements.entries()) {
+    const old = before.requirements[index];
+    for (const field of ['id', 'title', 'summary', 'change']) assert.equal(requirement[field], old[field]);
+    const originalTasks = (await read(`openspec/changes/${requirement.change}/legacy/tasks.md`)).toString('utf8').split('\n').filter((line) => /^\s*[-*+]\s+\[/.test(line));
+    const activeTasks = summaries[index].specs.flatMap((spec) => spec.tasks.map((task) => task.raw));
+    assert.deepEqual(activeTasks.sort(), originalTasks.sort(), `${requirement.id}: task description or checkbox changed during migration`);
+    for (const roleId of roles) {
+      const role = requirement.roles[roleId];
+      assert.equal(role.owner, old.roles[roleId].owner);
+      assert.equal(role.note, old.roles[roleId].note);
+      assert.equal(role.specs.length, requirement.id === 'REQ-003' ? 2 : 1);
+      for (const spec of role.specs) {
+        assert.equal(spec.state, old.roles[roleId].state);
+        assert.equal(spec.note, old.roles[roleId].note);
+      }
+    }
+  }
+}
+console.log(seeded ? 'Seeded stages, 48 exact task lines, 28 role specs, ownership, notes, and original bytes are preserved.' : 'Metadata v2, role spec sources, progress, and original migration bytes are valid.');

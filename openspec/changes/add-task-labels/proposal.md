@@ -14,11 +14,19 @@ Users need a light way to group related tasks without maintaining separate proje
 
 ### New Capabilities
 
-None.
+- `SA-REQ-003-labels`: Label rules.
+- `SA-REQ-003-filters`: Filter rules and empty state.
+- `FE-REQ-003-labels`: Label entry and removable chips.
+- `FE-REQ-003-filters`: Quick filters and empty results.
+- `BE-REQ-003-labels`: Label normalization and validation.
+- `BE-REQ-003-filters`: Exact-match label filter API.
+- `QA-REQ-003-integration`: Label edit and filter integration.
+- `QA-REQ-003-keyboard`: Empty results and keyboard regression.
 
 ### Modified Capabilities
 
-- `task-workspace`: Organize tasks with reusable labels and filter the workspace in one click.
+None. Role contracts retain the original task-workspace behavior; the original
+capability delta remains in `legacy/specs/task-workspace/spec.md` for traceability.
 
 ## Impact
 

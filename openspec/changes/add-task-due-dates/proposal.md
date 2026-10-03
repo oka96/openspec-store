@@ -14,11 +14,15 @@ Tasks need a clear time commitment so users can see what needs attention today. 
 
 ### New Capabilities
 
-None.
+- `SA-REQ-002-date-contract`: Date contract.
+- `FE-REQ-002-date-editor`: Date editor and overdue cues.
+- `BE-REQ-002-date-validation`: Date validation and round trips.
+- `QA-REQ-002-date-boundaries`: Date lifecycle and boundary acceptance.
 
 ### Modified Capabilities
 
-- `task-workspace`: Give each task an optional due date and make overdue work visible.
+None. Role contracts retain the original task-workspace behavior; the original
+capability delta remains in `legacy/specs/task-workspace/spec.md` for traceability.
 
 ## Impact
 

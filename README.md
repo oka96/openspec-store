@@ -1,138 +1,175 @@
-# openspec-store
+# OpenSpec store
 
-Taskflow is a sample specification store for the OpenHands Apps requirement
-board. It shows one requirement moving through **SA → Frontend + Backend → QA**.
-Every requirement includes work for all four roles and can reach Done only when
-all four role checklists are complete.
+This specification store supplies the **OpenSpec Kanban** app. Each `REQ-xxx`
+requirement contains SA, Frontend, Backend, and QA ownership and can contain
+several independent feature specs for each role.
 
-**This is demonstration data.** The checked tasks, owners, progress, and blocker
-are illustrative. Checked boxes do not claim that a task product was implemented
-or that its tests were executed. The product requirements here are samples; the
-board that visualizes them lives in `/Users/oka/Desktop/openhands-apps`.
+**This is demonstration data.** Checked tasks, owners, progress, and blockers are
+illustrative. They do not certify product implementation or executed tests. The
+Kanban app lives in `/Users/oka/Desktop/openhands-apps`; the configured product
+workspace is `/Users/oka/Desktop/openhands-demo`.
 
-## Sample requirements
+## Requirement and spec identity
 
-| Requirement | Change | Board column | Seeded tasks |
-| --- | --- | --- | --- |
-| REQ-001 · Task descriptions | `add-task-descriptions` | Backlog | 0/8 |
-| REQ-002 · Due dates & overdue cues | `add-task-due-dates` | SA | 1/8 |
-| REQ-003 · Labels & quick filters | `add-task-labels` | Implementation | 3/8 |
-| REQ-004 · Complete & reopen tasks | `add-task-completion` | QA | 7/8 |
-| REQ-005 · Task dependency links | `add-task-dependency-links` | Blocked | 3/8 |
-| REQ-006 · Keyboard quick capture | `add-task-quick-capture` | Done | 8/8 |
+Keep the requirement's existing lowercase OpenSpec change directory. Use these
+canonical spec IDs, including uppercase prefixes and requirement ID:
 
-Each change contains `proposal.md`, `design.md`, `specs/task-workspace/spec.md`,
-`tasks.md`, and CLI-created `.openspec.yaml`. The main workflow contract is
-[`openspec/specs/task-workspace/spec.md`](openspec/specs/task-workspace/spec.md).
-All changes stay active so the full sample remains visible on the board.
+| Role | Pattern | Example |
+| --- | --- | --- |
+| SA | `SA-REQ-xxx-<feature>` | `SA-REQ-003-labels` |
+| Frontend | `FE-REQ-xxx-<feature>` | `FE-REQ-003-filters` |
+| Backend | `BE-REQ-xxx-<feature>` | `BE-REQ-003-labels` |
+| QA | `QA-REQ-xxx-<feature>` | `QA-REQ-003-keyboard` |
 
-## Run OpenSpec
+Requirement numbers contain at least three digits. Feature suffixes use lowercase
+kebab case. IDs must match their exact requirement and role, be unique across the
+store, and contain at most 160 characters. A requirement supports at most 20 specs
+and 500 tasks. An empty role is allowed during planning but cannot complete.
 
-This store pins `@fission-ai/openspec` to **1.14.0**. Use Node.js 24 and run:
-
-```sh
-cd /Users/oka/Desktop/openspec-store
-npm install
-npx --no-install openspec store register . --id openspec-store --yes --json
-npx --no-install openspec list --store openspec-store
-npm run spec:validate
-npm run store:doctor
-npm test
+```text
+openspec/changes/add-task-labels/
+  .openspec.yaml                         # schema: role-specs
+  proposal.md                           # shared requirement context
+  design.md                             # shared design
+  specs/FE-REQ-003-labels/spec.md
+  specs/FE-REQ-003-filters/spec.md
+  tasks/FE-REQ-003-labels.md
+  tasks/FE-REQ-003-filters.md
+  ...                                   # SA, Backend, QA specs/tasks
+  legacy/                               # original migration references
 ```
 
-`npm test` validates the current store, including new requirements and changed
-progress. `npm run test:seeded` additionally checks the original six demonstration
-phases; use it only before replacing seeded progress with real work.
+The local [`role-specs` schema](openspec/schemas/role-specs/schema.yaml) defines
+proposal, specs, design, and task artifacts and tracks `tasks/*.md`. OpenSpec
+1.14.0 discovers the literal uppercase spec paths. Its new change names remain
+lowercase; a spec ID is a capability ID inside the existing change.
 
-The OpenHands board's role actions can invoke Propose, Update, and Apply through
-definitions in `/Users/oka/Desktop/openhands-automation`. A successful Propose adds
-a new requirement with all four roles. Update edits planning artifacts; Apply
-works only on the selected role's tasks in the configured code project. Refresh
-the board after a run to read the resulting files.
+## Metadata version 2
 
-The local registration points `openspec-store` to this repository. It does not
-copy files or initialize a new Git history. The original `.git` remains intact.
-After moving or cloning the repository, repeat the registration command from
-the new root. Never copy another machine's global store registry.
-
-Inspect a sample with:
-
-```sh
-npx --no-install openspec show add-task-completion --store openspec-store
-npx --no-install openspec status --change add-task-completion --store openspec-store
-npx --no-install openspec instructions apply --change add-task-completion --store openspec-store --json
-```
-
-## Board metadata contract
-
-[`openspec/requirements.json`](openspec/requirements.json) supplies display
-metadata. Its shape is:
+[`openspec/requirements.json`](openspec/requirements.json) registers the source
+files and supplies presentation context. A requirement retains `id`, `title`,
+`summary`, `change`, and the exact four role keys. Each role contains:
 
 ```json
 {
-  "version": 1,
-  "name": "Taskflow · Sample spec store",
-  "description": "A description of the store",
-  "requirements": [
+  "owner": "Maya · sample",
+  "note": "Label chips are illustrated complete; filter interaction is next.",
+  "specs": [
     {
-      "id": "REQ-001",
-      "title": "Task descriptions",
-      "summary": "Capture helpful context in an optional task description.",
-      "change": "add-task-descriptions",
-      "roles": {
-        "SA": { "owner": "Avery · sample", "state": "backlog", "note": "Ready for scope review." },
-        "Frontend": { "owner": "Maya · sample", "state": "backlog", "note": "Waiting for SA." },
-        "Backend": { "owner": "Leo · sample", "state": "backlog", "note": "Waiting for SA." },
-        "QA": { "owner": "Quinn · sample", "state": "backlog", "note": "Acceptance review is queued." }
-      }
+      "id": "FE-REQ-003-labels",
+      "title": "Label entry and removable chips",
+      "state": "in_progress",
+      "note": "Label chips are illustrated complete; filter interaction is next."
+    },
+    {
+      "id": "FE-REQ-003-filters",
+      "title": "Quick filters and empty results",
+      "state": "in_progress",
+      "note": "Label chips are illustrated complete; filter interaction is next."
     }
   ]
 }
 ```
 
-- `id` is stable and unique; `change` exactly matches the OpenSpec change folder.
-- Role keys are exactly `SA`, `Frontend`, `Backend`, and `QA`.
-- An unfinished role's `state` is `backlog`, `in_progress`, or `blocked`.
-- `note` explains the current work or blocker. Blocked roles need a useful note.
-- There is no metadata `done` state: completion is derived from the checklist.
+Spec hints are `backlog`, `in_progress`, or `blocked`; use the note to explain a
+blocker when available. Role state and completion are derived, so there is no independent
+role `state` field and no metadata `done` value. Owners stay on the role; blocker
+and active-work notes can differ between specs.
 
-## Updating progress
-
-Tasks live in `openspec/changes/<change>/tasks.md`. Use the exact role tags:
+Each `tasks/<ID>.md` contains numbered checkboxes with the exact owning role tag:
 
 ```md
-- [ ] 1.1 [SA] Define acceptance cases; verify each case has an observable result.
-- [x] 2.1 [Frontend] Build the control; verify its keyboard interaction.
-- [ ] 3.1 [Backend] Validate the payload; verify invalid input leaves state unchanged.
-- [ ] 4.1 [QA] Run the integration scenarios; record the observed results.
+- [ ] 1.1 [Frontend] Build the date editor; verify keyboard editing and clearing.
 ```
 
-For real work, check a task only after its implementation and stated verification
-succeed. Change role state hints and notes in `requirements.json` to explain work
-in progress or a blocker. When all of a role's tasks are checked, the board derives
-that role as done even if its unused hint is `backlog`.
+Use numbered tasks as the schema recommends. Numbers must be unique within their
+spec; the same `1.1` is valid in another spec. Role-first task numbering is also
+readable; a numberless task receives a `line-<number>` local identity. Source
+identity is `(spec ID, local task ID)`. Only `x` or `X` means complete.
+Check tasks only after their implementation and stated verification succeed.
 
-The board derives columns from task completion and role hints:
+## Progress and role actions
 
-1. All tasks complete, with tasks for every role: **Done**.
-2. Any unfinished role blocked: **Blocked**.
-3. No completed work and no active role: **Backlog**.
-4. SA unfinished after work begins: **SA**.
-5. SA complete, with Frontend or Backend unfinished: **Implementation**.
-6. SA, Frontend, and Backend complete, with QA unfinished: **QA**.
+A spec completes when its source files exist and its nonempty checklist is fully
+checked. A role completes only when it has specs and all are complete. All four
+roles must complete before the requirement reaches Done. Unfinished blocked specs
+take precedence; otherwise the board follows Backlog → Solution Design →
+Implementation → QA → Done. Frontend and Backend share Implementation.
 
-Frontend and Backend share Implementation so they can progress in parallel.
-One completed role cannot complete the requirement. Unchecking a task reopens
-its role and moves the requirement back to the corresponding delivery phase.
+Missing specs, missing task files, and empty checklists stay incomplete. The store
+validator rejects missing registered source files and unregistered spec/task files
+so CLI and Kanban cannot silently track different work. Consumers can show missing
+source warnings while a requirement is being prepared.
 
-## Add another sample
+Kanban provides a separate source preview and task list for every named spec.
+Role actions use the fixed twelve role/skill definitions in
+`/Users/oka/Desktop/openhands-automation`:
+
+- **Propose** adds a feature spec to the selected requirement and role.
+- **Update** revises the selected spec and its task planning.
+- **Apply** implements and verifies the selected spec's tasks.
+
+Shared proposal/design, sibling specs, metadata unrelated to the action, and
+legacy references remain outside a spec-scoped edit. Conversations identify the
+selected spec as `[Role] <spec ID>` and include a spec tag. Refresh reads current
+files; loading or refreshing the board does not start agents.
+
+## Sample requirements
+
+| Requirement | Change | Stage | Seeded tasks | Specs |
+| --- | --- | --- | --- | ---: |
+| REQ-001 · Task descriptions | `add-task-descriptions` | Backlog | 0/8 | 4 |
+| REQ-002 · Due dates & overdue cues | `add-task-due-dates` | Solution Design | 1/8 | 4 |
+| REQ-003 · Labels & quick filters | `add-task-labels` | Implementation | 3/8 | 8 |
+| REQ-004 · Complete & reopen tasks | `add-task-completion` | QA | 7/8 | 4 |
+| REQ-005 · Task dependency links | `add-task-dependency-links` | Blocked | 3/8 | 4 |
+| REQ-006 · Keyboard quick capture | `add-task-quick-capture` | Done | 8/8 | 4 |
+
+REQ-003 demonstrates two specs for every role. The main
+[`task-workspace` specification](openspec/specs/task-workspace/spec.md) and sample
+product behavior remain unchanged.
+
+## Validate and inspect
+
+Use Node.js 24 and the pinned CLI:
 
 ```sh
-npx --no-install openspec new change add-your-requirement --store openspec-store
-npx --no-install openspec instructions proposal --change add-your-requirement --store openspec-store --json
+npm install
+npx --no-install openspec store register . --id openspec-store --yes --json
+npm test
+npm run test:seeded
+npm run schema:validate
+npm run spec:validate
+npm run store:doctor
+npx --no-install openspec status --change add-task-labels --store openspec-store
+npx --no-install openspec instructions apply --change add-task-labels --store openspec-store --json
 ```
 
-Follow the proposal, specs, design, and tasks instructions, then add its metadata
-entry. Include at least two verifiable tasks per role for consistency with this
-sample. Keep the existing capability path when extending `task-workspace`.
-Run the validation commands above and refresh the OpenHands Apps board.
+`npm test` validates current metadata and source consistency, validator edge cases,
+native CLI discovery, migration idempotence, and preserved original bytes.
+`test:seeded` additionally requires all original sample task lines, ownership,
+notes, and stage outcomes; use it before replacing illustrative progress with real
+work. Native apply JSON includes each task's source path and line. Its returned
+task IDs are CLI sequence numbers, so use source paths to identify the spec.
+
+## Migration and rollback
+
+The repeatable `npm run migrate:role-specs` migrates only the original six v1
+samples. It splits their original 48 task lines without changing descriptions,
+numbers, or checkbox markers; moves role hints into per-spec hints; and preserves
+the six stage outcomes, including REQ-002 in Solution Design.
+
+Each change's `legacy/` retains byte-for-byte original proposal, design, task
+checklist, capability delta, and `.openspec.yaml`. Original metadata and config,
+plus a SHA-256 manifest of all 32 originals, live under
+[`openspec/migrations/role-specs-v1/`](openspec/migrations/role-specs-v1/).
+Legacy files are outside active schema globs, so they never double-count progress.
+SA contracts retain the original product acceptance requirements; other role
+contracts describe the corresponding existing UI, API, and verification scope.
+
+The migration preflights writes, refuses conflicting content, writes metadata
+last, and can recover an interrupted v1 migration from its preserved originals.
+On v2 it validates and exits without rewriting source or resetting progress.
+Do not rerun it to reset samples. Roll back the coordinated store, app, and
+automation changes together through Git; retained originals permit manual recovery
+and should never replace newer active work without review.

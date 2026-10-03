@@ -29,3 +29,18 @@ included in this specification store. The change crosses UI and API boundaries.
 There is no persistent database migration in this sample design. Implement the
 API contract first, then enable the UI controls. Roll back by hiding the controls
 and retaining any compatible existing task fields.
+
+## Role specification tracking
+
+Shared product decisions above are unchanged. This requirement uses the local
+`role-specs` workflow. Each role feature has its own specification and checklist:
+
+- [SA-REQ-005-dependency-contract](specs/SA-REQ-005-dependency-contract/spec.md) · [tasks](tasks/SA-REQ-005-dependency-contract.md)
+- [FE-REQ-005-dependency-controls](specs/FE-REQ-005-dependency-controls/spec.md) · [tasks](tasks/FE-REQ-005-dependency-controls.md)
+- [BE-REQ-005-dependency-validation](specs/BE-REQ-005-dependency-validation/spec.md) · [tasks](tasks/BE-REQ-005-dependency-validation.md)
+- [QA-REQ-005-dependency-regression](specs/QA-REQ-005-dependency-regression/spec.md) · [tasks](tasks/QA-REQ-005-dependency-regression.md)
+
+Metadata version 2 registers these role specs. Progress comes from each task file;
+every registered spec must be complete before its role can complete. The original
+planning artifacts remain byte-preserved under `legacy/` and are not active task
+sources. Seeded checks remain illustrative rather than implementation evidence.

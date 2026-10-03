@@ -14,11 +14,15 @@ Capturing small tasks should not interrupt the user’s workflow. A keyboard-fir
 
 ### New Capabilities
 
-None.
+- `SA-REQ-006-capture-contract`: Keyboard capture contract.
+- `FE-REQ-006-capture-form`: Capture form and focus recovery.
+- `BE-REQ-006-capture-validation`: Create title validation.
+- `QA-REQ-006-capture-regression`: Capture acceptance and keyboard regression.
 
 ### Modified Capabilities
 
-- `task-workspace`: Create a task from the keyboard and return focus to the next piece of work.
+None. Role contracts retain the original task-workspace behavior; the original
+capability delta remains in `legacy/specs/task-workspace/spec.md` for traceability.
 
 ## Impact
 

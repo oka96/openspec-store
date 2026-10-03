@@ -14,11 +14,15 @@ Users need to distinguish finished tasks from active work and recover when they 
 
 ### New Capabilities
 
-None.
+- `SA-REQ-004-completion-contract`: Completion and reopen contract.
+- `FE-REQ-004-completion-controls`: Completion controls and feedback.
+- `BE-REQ-004-completion-api`: Idempotent completion API.
+- `QA-REQ-004-completion-regression`: Completion lifecycle regression.
 
 ### Modified Capabilities
 
-- `task-workspace`: Track finished work, reopen it when needed, and keep progress counts accurate.
+None. Role contracts retain the original task-workspace behavior; the original
+capability delta remains in `legacy/specs/task-workspace/spec.md` for traceability.
 
 ## Impact
 
