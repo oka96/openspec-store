@@ -1,0 +1,18 @@
+{
+  "name": "openspec-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Four-role sample requirements for the OpenHands Apps Taskflow board",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "spec:validate": "openspec validate --all --strict --store openspec-store",
+    "store:doctor": "openspec store doctor openspec-store",
+    "test": "node scripts/validate-samples.mjs",
+    "test:seeded": "node scripts/validate-samples.mjs --seeded"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.14.0"
+  }
+}
