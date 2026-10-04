@@ -2,7 +2,7 @@
   "name": "openspec-store",
   "version": "1.0.0",
   "private": true,
-  "description": "Requirements with multiple role-owned feature specs for OpenSpec Kanban",
+  "description": "Folder-derived requirements with independent role changes for OpenSpec Kanban",
   "engines": {
     "node": "24.x"
   },
@@ -11,8 +11,8 @@
     "store:doctor": "openspec store doctor openspec-store",
     "test": "node --test tests/*.test.mjs && node scripts/validate-samples.mjs",
     "test:seeded": "node scripts/validate-samples.mjs --seeded",
-    "schema:validate": "openspec schema validate role-specs",
-    "migrate:role-specs": "node scripts/migrate-role-specs.mjs"
+    "schema:validate": "openspec schema validate spec-driven",
+    "store:validate": "node scripts/validate-samples.mjs"
   },
   "devDependencies": {
     "@fission-ai/openspec": "1.14.0"

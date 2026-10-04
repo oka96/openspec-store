@@ -1,133 +1,139 @@
 # OpenSpec store
 
-This specification store supplies the **OpenSpec Kanban** app. Each `REQ-xxx`
-requirement contains SA, Frontend, Backend, and QA ownership and can contain
-several independent feature specs for each role.
+Each feature is an independent OpenSpec change. OpenSpec Kanban groups changes
+into requirements directly from their folder names. There is no active
+requirement registry to maintain.
 
-**This is demonstration data.** Checked tasks, owners, progress, and blockers are
-illustrative. They do not certify product implementation or executed tests. The
-Kanban app lives in `/Users/oka/Desktop/openhands-apps`; the configured product
+This is demonstration data. Checked tasks, ownership and blockers are
+illustrative; they do not certify implementation or executed tests. The Kanban
+App is in `/Users/oka/Desktop/openhands-apps`, and the configured product
 workspace is `/Users/oka/Desktop/openhands-demo`.
 
-## Requirement and spec identity
+## Folder identity
 
-Keep the requirement's existing lowercase OpenSpec change directory. Use these
-canonical spec IDs, including uppercase prefixes and requirement ID:
+Use `<role>-<requirementPrefix>-<requirementId>-<feature>`:
 
-| Role | Pattern | Example |
+| Change folder | Role | Requirement |
 | --- | --- | --- |
-| SA | `SA-REQ-xxx-<feature>` | `SA-REQ-003-labels` |
-| Frontend | `FE-REQ-xxx-<feature>` | `FE-REQ-003-filters` |
-| Backend | `BE-REQ-xxx-<feature>` | `BE-REQ-003-labels` |
-| QA | `QA-REQ-xxx-<feature>` | `QA-REQ-003-keyboard` |
+| `SA-REQ-003-labels` | SA | `REQ-003` |
+| `FE-REQ-003-filters` | Frontend | `REQ-003` |
+| `BE-STORY-12-api` | Backend | `STORY-12` |
+| `QA-TASK-0001-checks` | QA | `TASK-0001` |
 
-Requirement numbers contain at least three digits. Feature suffixes use lowercase
-kebab case. IDs must match their exact requirement and role, be unique across the
-store, and contain at most 160 characters. A requirement supports at most 20 specs
-and 500 tasks. An empty role is allowed during planning but cannot complete.
+Roles are SA, FE, BE and QA. A requirement prefix begins with an uppercase letter
+and contains uppercase letters or digits. The numeric requirement ID preserves
+leading zeroes, so `REQ-003` and `REQ-3` are different requirements. Features use
+lowercase kebab case. Full folder names have at most 160 characters.
 
 ```text
-openspec/changes/add-task-labels/
-  .openspec.yaml                         # schema: role-specs
-  proposal.md                           # shared requirement context
-  design.md                             # shared design
-  specs/FE-REQ-003-labels/spec.md
-  specs/FE-REQ-003-filters/spec.md
-  tasks/FE-REQ-003-labels.md
-  tasks/FE-REQ-003-filters.md
-  ...                                   # SA, Backend, QA specs/tasks
-  legacy/                               # original migration references
+openspec/
+  config.yaml                            # schema: spec-driven
+  specs/
+    sa/spec.md                           # solution design and role handoff
+    fe/spec.md                           # Frontend ownership and progress
+    be/spec.md                           # Backend ownership and progress
+    qa/spec.md                           # verification and completion gate
+  changes/
+    SA-REQ-003-labels/
+      .openspec.yaml                     # schema: spec-driven
+      proposal.md
+      design.md
+      specs/SA-REQ-003-labels/spec.md
+      tasks.md
+    FE-REQ-003-filters/
+      .openspec.yaml
+      proposal.md
+      design.md
+      specs/FE-REQ-003-filters/spec.md
+      tasks.md
 ```
 
-The local [`role-specs` schema](openspec/schemas/role-specs/schema.yaml) defines
-proposal, specs, design, and task artifacts and tracks `tasks/*.md`. OpenSpec
-1.14.0 discovers the literal uppercase spec paths. Its new change names remain
-lowercase; a spec ID is a capability ID inside the existing change.
+Every role change owns all four planning artifacts. Multiple capability
+contracts may live under `specs/<capability>/spec.md` within one role change.
+Adding or removing a canonical change folder changes the board on Refresh.
+The board ignores ordinary non-role changes and `archive/`; it rejects malformed
+role names and unsafe links. Store limits are 50 requirements, 20 role changes per
+requirement, 500 tasks per requirement, 20 capability files per change, and
+64 KiB per source file.
 
-## Metadata version 2
+The pinned OpenSpec 1.14.0 CLI discovers, inspects, validates and archives these
+uppercase change names. Its `new change` command accepts lowercase names only.
+For canonical role folders, Kanban Propose safely scaffolds the exact folder
+and `.openspec.yaml` before planning. When creating one manually, create the
+folder and standard artifacts directly with `schema: spec-driven`.
 
-[`openspec/requirements.json`](openspec/requirements.json) registers the source
-files and supplies presentation context. A requirement retains `id`, `title`,
-`summary`, `change`, and the exact four role keys. Each role contains:
+## Optional presentation context
 
-```json
-{
-  "owner": "Maya · sample",
-  "note": "Label chips are illustrated complete; filter interaction is next.",
-  "specs": [
-    {
-      "id": "FE-REQ-003-labels",
-      "title": "Label entry and removable chips",
-      "state": "in_progress",
-      "note": "Label chips are illustrated complete; filter interaction is next."
-    },
-    {
-      "id": "FE-REQ-003-filters",
-      "title": "Quick filters and empty results",
-      "state": "in_progress",
-      "note": "Label chips are illustrated complete; filter interaction is next."
-    }
-  ]
-}
-```
-
-Spec hints are `backlog`, `in_progress`, or `blocked`; use the note to explain a
-blocker when available. Role state and completion are derived, so there is no independent
-role `state` field and no metadata `done` value. Owners stay on the role; blocker
-and active-work notes can differ between specs.
-
-Each `tasks/<ID>.md` contains numbered checkboxes with the exact owning role tag:
+An ordinary proposal with no extra metadata is enough for discovery. To give the
+board titles, ownership or blockers, add this optional Markdown section:
 
 ```md
-- [ ] 1.1 [Frontend] Build the date editor; verify keyboard editing and clearing.
+## Kanban
+
+- Requirement title: Labels & quick filters
+- Requirement summary: Organize tasks with labels.
+  Use exact matching for quick filters.
+- Spec title: Quick filters and empty results
+- Owner: Maya
+- Role note: Waiting for the label contract.
+- State: in_progress
+- Note: Verify empty results and clearing the filter.
 ```
 
-Use numbered tasks as the schema recommends. Numbers must be unique within their
-spec; the same `1.1` is valid in another spec. Role-first task numbering is also
-readable; a numberless task receives a `line-<number>` local identity. Source
-identity is `(spec ID, local task ID)`. Only `x` or `X` means complete.
-Check tasks only after their implementation and stated verification succeed.
+These seven labels are optional, case-sensitive display fields. Indent continuation
+lines by two spaces to retain multiline values. Titles and owners allow 200
+characters; summaries and notes allow 4000. State may be `backlog`,
+`in_progress` or `blocked`; completion always comes from tasks and sources.
+Metadata never changes a folder's role, requirement or feature identity.
 
-## Progress and role actions
+Without this section, the requirement title defaults to its ID, the spec title
+comes from the feature name, and the owner is Unassigned. Conflicting requirement
+titles or summaries produce warnings; the first nonempty value in change-name
+order wins. Role owners and notes aggregate distinct values across sibling changes.
 
-A spec completes when its source files exist and its nonempty checklist is fully
-checked. A role completes only when it has specs and all are complete. All four
-roles must complete before the requirement reaches Done. Unfinished blocked specs
-take precedence; otherwise the board follows Backlog → Solution Design →
-Implementation → QA → Done. Frontend and Backend share Implementation.
+## Progress and actions
 
-Missing specs, missing task files, and empty checklists stay incomplete. The store
-validator rejects missing registered source files and unregistered spec/task files
-so CLI and Kanban cannot silently track different work. Consumers can show missing
-source warnings while a requirement is being prepared.
+Put checklists in each change's `tasks.md`. Untagged tasks inherit the folder's
+role. Optional explicit role tags must agree with the folder:
 
-Kanban provides a separate source preview and task list for every named spec.
-Role actions use the fixed twelve role/skill definitions in
-`/Users/oka/Desktop/openhands-automation`:
+```md
+- [ ] 1.1 Build the date editor; verify editing and clearing.
+- [ ] 1.2 [Frontend] Verify keyboard focus after saving.
+```
 
-- **Propose** adds a feature spec to the selected requirement and role.
-- **Update** revises the selected spec and its task planning.
-- **Apply** implements and verifies the selected spec's tasks.
+Local task numbers must be unique within one change. Source identity is the
+change ID plus local task ID. Only `x` or `X` means complete.
 
-Shared proposal/design, sibling specs, metadata unrelated to the action, and
-legacy references remain outside a spec-scoped edit. Conversations identify the
-selected spec as `[Role] <spec ID>` and include a spec tag. Refresh reads current
-files; loading or refreshing the board does not start agents.
+A change completes only when all planning sources exist, its checklist is
+nonempty, and every task is checked. A role completes when all its changes
+complete. All four roles must complete before the grouped requirement reaches
+Done. Unfinished blocked changes take precedence; otherwise stages are Backlog,
+Solution Design, Implementation, QA and Done. Frontend and Backend share
+Implementation.
 
-## Sample requirements
+Kanban previews the selected change's proposal, design, capability contracts and
+tasks. The twelve role/skill definitions in `/Users/oka/Desktop/openhands-automation`
+support Propose (new role change under the selected requirement), Update (repair
+or revise selected planning), and Apply (implement the selected checklist).
+Update and Apply preserve sibling changes; Propose needs no registration step.
+Loading, refreshing or changing controls never starts an agent.
 
-| Requirement | Change | Stage | Seeded tasks | Specs |
-| --- | --- | --- | --- | ---: |
-| REQ-001 · Task descriptions | `add-task-descriptions` | Backlog | 0/8 | 4 |
-| REQ-002 · Due dates & overdue cues | `add-task-due-dates` | Solution Design | 1/8 | 4 |
-| REQ-003 · Labels & quick filters | `add-task-labels` | Implementation | 3/8 | 8 |
-| REQ-004 · Complete & reopen tasks | `add-task-completion` | QA | 7/8 | 4 |
-| REQ-005 · Task dependency links | `add-task-dependency-links` | Blocked | 3/8 | 4 |
-| REQ-006 · Keyboard quick capture | `add-task-quick-capture` | Done | 8/8 | 4 |
+## Samples
 
-REQ-003 demonstrates two specs for every role. The main
-[`task-workspace` specification](openspec/specs/task-workspace/spec.md) and sample
-product behavior remain unchanged.
+| Requirement | Stage | Seeded tasks | Role changes |
+| --- | --- | ---: | ---: |
+| REQ-001 · Task descriptions | Backlog | 0/8 | 4 |
+| REQ-002 · Due dates & overdue cues | Solution Design | 1/8 | 4 |
+| REQ-003 · Labels & quick filters | Implementation | 3/8 | 8 |
+| REQ-004 · Complete & reopen tasks | QA | 7/8 | 4 |
+| REQ-005 · Task dependency links | Blocked | 3/8 | 4 |
+| REQ-006 · Keyboard quick capture | Done | 8/8 | 4 |
+
+REQ-003 has two independent changes per role. The four main role specifications
+are [SA](openspec/specs/sa/spec.md), [FE](openspec/specs/fe/spec.md),
+[BE](openspec/specs/be/spec.md) and [QA](openspec/specs/qa/spec.md). They define
+role responsibilities, traceability, handoffs and the shared completion gate;
+feature-specific product contracts live in the 28 independent role changes.
 
 ## Validate and inspect
 
@@ -135,41 +141,30 @@ Use Node.js 24 and the pinned CLI:
 
 ```sh
 npm install
-npx --no-install openspec store register . --id openspec-store --yes --json
 npm test
 npm run test:seeded
 npm run schema:validate
 npm run spec:validate
-npm run store:doctor
-npx --no-install openspec status --change add-task-labels --store openspec-store
-npx --no-install openspec instructions apply --change add-task-labels --store openspec-store --json
+npx --no-install openspec list --json
+npx --no-install openspec list --specs --json
+npx --no-install openspec status --change FE-REQ-003-filters --json
+npx --no-install openspec instructions apply --change FE-REQ-003-filters --json
 ```
 
-`npm test` validates current metadata and source consistency, validator edge cases,
-native CLI discovery, migration idempotence, and preserved original bytes.
-`test:seeded` additionally requires all original sample task lines, ownership,
-notes, and stage outcomes; use it before replacing illustrative progress with real
-work. Native apply JSON includes each task's source path and line. Its returned
-task IDs are CLI sequence numbers, so use source paths to identify the spec.
+To use this repository from another workspace, register it once and pass
+`--store openspec-store` to the CLI:
 
-## Migration and rollback
+```sh
+npx --no-install openspec store register . --id openspec-store --yes --json
+npm run store:doctor
+```
 
-The repeatable `npm run migrate:role-specs` migrates only the original six v1
-samples. It splits their original 48 task lines without changing descriptions,
-numbers, or checkbox markers; moves role hints into per-spec hints; and preserves
-the six stage outcomes, including REQ-002 in Solution Design.
+`npm test` checks directory discovery, unsafe and incomplete sources, all four
+main roles and 28 changes through native CLI list/status/apply/strict validation,
+and native archive in a disposable fixture. It does not dispatch agents. `test:seeded` additionally
+checks the six sample requirements, 28 role changes, task counts and six stage
+outcomes; it will intentionally fail after real work changes the seeded progress.
 
-Each change's `legacy/` retains byte-for-byte original proposal, design, task
-checklist, capability delta, and `.openspec.yaml`. Original metadata and config,
-plus a SHA-256 manifest of all 32 originals, live under
-[`openspec/migrations/role-specs-v1/`](openspec/migrations/role-specs-v1/).
-Legacy files are outside active schema globs, so they never double-count progress.
-SA contracts retain the original product acceptance requirements; other role
-contracts describe the corresponding existing UI, API, and verification scope.
-
-The migration preflights writes, refuses conflicting content, writes metadata
-last, and can recover an interrupted v1 migration from its preserved originals.
-On v2 it validates and exits without rewriting source or resetting progress.
-Do not rerun it to reset samples. Roll back the coordinated store, app, and
-automation changes together through Git; retained originals permit manual recovery
-and should never replace newer active work without review.
+Validation reads the current role folders directly. Ownership and board notes
+come from each proposal's optional Kanban section, and completion comes from
+each change's checklist.

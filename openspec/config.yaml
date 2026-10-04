@@ -1,14 +1,16 @@
-schema: role-specs
+schema: spec-driven
 
 context: |
-  This illustrative specification store groups role-owned feature specs under
-  REQ-xxx requirements and their existing lowercase OpenSpec change directories.
-  Canonical IDs are SA-REQ-xxx-feature, FE-REQ-xxx-feature, BE-REQ-xxx-feature,
-  and QA-REQ-xxx-feature; each role can have multiple specs. Metadata version 2
-  registers each exact ID in openspec/requirements.json. Keep per-spec contracts
-  at specs/<ID>/spec.md and tasks at tasks/<ID>.md inside the requirement change.
-  Shared proposal/design provide context. Spec-scoped work preserves shared and
-  sibling artifacts. Legacy originals are migration references, not active work.
-  Checked sample tasks are seeded demonstration progress, not implementation or
-  test evidence. This repository owns specifications only; the Kanban app lives
-  separately in /Users/oka/Desktop/openhands-apps.
+  Main role specifications live in openspec/specs/ under sa/, fe/, be/ and qa/.
+  They cover solution design, frontend, backend and verification.
+  Each role feature is an independent change named
+  <role>-<requirementPrefix>-<requirementId>-<feature>, for example
+  FE-REQ-003-filters or BE-STORY-12-api. SA, FE, BE and QA identify ownership.
+  The exact uppercase prefix and numeric ID group the requirement; preserve
+  leading zeroes. Folder names are authoritative. No requirement registry is
+  required. Each change owns proposal.md, design.md, specs/*/spec.md and tasks.md.
+  Optional display context lives in the proposal's ## Kanban section. Preserve
+  sibling changes and main specs when working on one role change.
+  Checked sample tasks are illustrative progress, not implementation evidence.
+  This repository owns specifications only; the Kanban app lives separately in
+  /Users/oka/Desktop/openhands-apps.
