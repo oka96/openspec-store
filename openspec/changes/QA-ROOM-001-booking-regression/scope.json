@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "applications": [
+    {
+      "id": "sample-regression",
+      "name": "Meeting room regression",
+      "role": "QA",
+      "repository": "https://github.com/oka96/sample-regression.git"
+    }
+  ],
+  "references": [
+    "SA-ROOM-001-booking-contract",
+    "FE-ROOM-001-booking-ui",
+    "BE-ROOM-001-booking-api"
+  ]
+}

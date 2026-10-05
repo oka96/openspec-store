@@ -180,7 +180,7 @@ test('bounded source and requirement/spec/task limits reject oversized stores', 
   await assert.rejects(validateStore(directory), /50 requirements/);
 });
 
-test('actual pinned CLI validates exactly four main roles and all28 independent changes with correct task paths', { timeout: 120000 }, async () => {
+test('actual pinned CLI validates exactly four main roles and all repository-scoped changes with correct task paths', { timeout: 120000 }, async () => {
   const cli = path.join(root, 'node_modules/@fission-ai/openspec/bin/openspec.js');
   const run = async (args, cwd = root) => JSON.parse((await exec(process.execPath, [cli, ...args, '--json'], { cwd, maxBuffer: 4 * 1024 * 1024 })).stdout);
   const specs = (await validateStore(root)).summaries.flatMap((item) => item.specs);
@@ -196,11 +196,11 @@ test('actual pinned CLI validates exactly four main roles and all28 independent 
   for (let i = 0; i < specs.length; i += 4) {
     await Promise.all(specs.slice(i, i + 4).map(async (spec) => {
       const status = await run(['status', '--change', spec.id]);
-      assert.equal(status.schemaName, 'spec-driven');
+      assert.equal(status.schemaName, spec.schema);
       assert.equal(status.isPlanningComplete, true);
       assert.equal(status.changeRoot, path.join(root, 'openspec/changes', spec.id));
       const response = await run(['instructions', 'apply', '--change', spec.id]);
-      assert.equal(response.schemaName, 'spec-driven');
+      assert.equal(response.schemaName, spec.schema);
       assert.deepEqual(response.progress, { total: spec.total, complete: spec.complete, remaining: spec.total - spec.complete });
       assert.deepEqual(response.contextFiles.tasks, [path.join(root, 'openspec/changes', spec.id, 'tasks.md')]);
       for (const task of response.tasks) {
@@ -215,7 +215,8 @@ test('actual pinned CLI validates exactly four main roles and all28 independent 
 
 test('native archive handles uppercase role change in disposable fixture and excludes it from discovery', async (t) => {
   const directory = await temp(t);
-  const name = 'QA-REQ-006-capture-regression';
+  const name = 'QA-ROOM-001-booking-regression';
+  await cp(path.join(root, 'openspec/schemas'), path.join(directory, 'openspec/schemas'), { recursive: true });
   await cp(path.join(root, 'openspec/changes', name), path.join(directory, 'openspec/changes', name), { recursive: true });
   const cli = path.join(root, 'node_modules/@fission-ai/openspec/bin/openspec.js');
   const { stdout } = await exec(process.execPath, [cli, 'archive', name, '--yes', '--skip-specs', '--json'], { cwd: directory });

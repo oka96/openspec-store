@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "applications": [
+    {
+      "id": "sample-frontend",
+      "name": "Meeting room web",
+      "role": "Frontend",
+      "repository": "https://github.com/oka96/sample-frontend.git"
+    }
+  ],
+  "references": [
+    "SA-ROOM-001-booking-contract"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "applications": [
+    {
+      "id": "sample-backend",
+      "name": "Meeting room API",
+      "role": "Backend",
+      "repository": "https://github.com/oka96/sample-backend.git"
+    },
+    {
+      "id": "sample-frontend",
+      "name": "Meeting room web",
+      "role": "Frontend",
+      "repository": "https://github.com/oka96/sample-frontend.git"
+    },
+    {
+      "id": "sample-regression",
+      "name": "Meeting room regression",
+      "role": "QA",
+      "repository": "https://github.com/oka96/sample-regression.git"
+    }
+  ],
+  "references": []
+}

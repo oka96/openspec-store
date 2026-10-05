@@ -1,16 +1,10 @@
-schema: spec-driven
-
+schema: sa
 context: |
-  Main role specifications live in openspec/specs/ under sa/, fe/, be/ and qa/.
-  They cover solution design, frontend, backend and verification.
-  Each role feature is an independent change named
-  <role>-<requirementPrefix>-<requirementId>-<feature>, for example
-  FE-REQ-003-filters or BE-STORY-12-api. SA, FE, BE and QA identify ownership.
-  The exact uppercase prefix and numeric ID group the requirement; preserve
-  leading zeroes. Folder names are authoritative. No requirement registry is
-  required. Each change owns proposal.md, design.md, specs/*/spec.md and tasks.md.
-  Optional display context lives in the proposal's ## Kanban section. Preserve
-  sibling changes and main specs when working on one role change.
-  Checked sample tasks are illustrative progress, not implementation evidence.
-  This repository owns specifications only; the Kanban app lives separately in
-  /Users/oka/Desktop/openhands-apps.
+  This is a specifications-only store. Each role change owns proposal.md,
+  design.md, specs/**/spec.md, tasks.md and scope.json. Folder prefixes SA, BE,
+  FE and QA determine role and exact requirement identity. Use schemas sa,
+  backend, frontend and qa respectively. SA can span repositories but never
+  edits code; it hands off to backend and frontend. Those roles each bind one
+  repository and reference SA. QA binds one regression repo and references SA,
+  frontend and backend. The meeting-room demo uses the three sample repositories.
+  Never treat unchecked tasks or planning artifacts as implementation evidence.

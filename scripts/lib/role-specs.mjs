@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { ROLE_SCHEMAS, validateRepositoryScope } from './repository-scope.cjs';
 import { lstat, open, readdir, realpath } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import path from 'node:path';
@@ -133,6 +134,7 @@ export async function validateStore(root, { allowMissing = false } = {}) {
   const changes = await safePath(root, 'openspec/changes');
   assert((await lstat(changes)).isDirectory(), 'changes must be a directory');
   const groups = new Map();
+  const scopes = new Map();
   const warnings = [];
   let sourceBytes = 0;
   const entries = await readdir(changes, { withFileTypes: true });
@@ -167,11 +169,15 @@ export async function validateStore(root, { allowMissing = false } = {}) {
         missing = true; warnings.push(`${entry.name}: missing ${label}`); return '';
       }
     }
-    // .openspec.yaml is optional with the store's default spec-driven schema.
+    let schema = 'spec-driven', scope = null;
+    // Legacy generic changes remain readable; role schemas require explicit scope.
     try {
       const config = await safeRead(root, `${base}/.openspec.yaml`);
-      assert(!/^schema:/m.test(config) || /^schema:\s*spec-driven\s*$/m.test(config), `${entry.name}: schema must be spec-driven`);
+      schema = config.match(/^schema:\s*([a-z-]+)\s*$/m)?.[1] || 'spec-driven';
+      assert(['spec-driven', ROLE_SCHEMAS[identity.role]].includes(schema), `${entry.name}: schema must match role`);
     } catch (error) { if (error.code !== 'ENOENT') throw error; }
+    try { scope = JSON.parse(await safeRead(root, `${base}/scope.json`)); } catch (error) { if (error.code !== 'ENOENT' || schema !== 'spec-driven') throw error; }
+    if (scope) { validateRepositoryScope(scope, entry.name); scopes.set(entry.name, scope); }
     const proposal = await source('proposal.md', 'proposal');
     await source('design.md', 'design');
     const context = parseKanban(proposal);
@@ -194,9 +200,10 @@ export async function validateStore(root, { allowMissing = false } = {}) {
     }
     const tasks = parseTasks(await source('tasks.md', 'tasks'), identity.role, identity.id);
     if (!tasks.length) warnings.push(`${entry.name}: no tasks; change is incomplete`);
-    group.push({ ...identity, title: context.title?.trim() || identity.feature.replaceAll('-', ' '), owner: context.owner?.trim() || 'Unassigned', roleNote: context.roleNote || '', state: context.state || 'backlog', note: context.note || '', requirementTitle: context.requirementTitle || '', requirementSummary: context.requirementSummary || '', tasks, specPaths, complete: tasks.filter((task) => task.done).length, total: tasks.length, missing });
+    group.push({ ...identity, schema, scope, title: context.title?.trim() || identity.feature.replaceAll('-', ' '), owner: context.owner?.trim() || 'Unassigned', roleNote: context.roleNote || '', state: context.state || 'backlog', note: context.note || '', requirementTitle: context.requirementTitle || '', requirementSummary: context.requirementSummary || '', tasks, specPaths, complete: tasks.filter((task) => task.done).length, total: tasks.length, missing });
     assert(group.reduce((sum, spec) => sum + spec.total, 0) <= 500, `${identity.requirement}: at most 500 tasks are supported`);
   }
+  for (const [id, scope] of scopes) validateRepositoryScope(scope, id, ref => scopes.get(ref));
   const summaries = [];
   for (const [id, specs] of [...groups].sort(([a], [b]) => a.localeCompare(b, 'en'))) {
     const titles = [...new Set(specs.map((spec) => spec.requirementTitle).filter(Boolean))];
